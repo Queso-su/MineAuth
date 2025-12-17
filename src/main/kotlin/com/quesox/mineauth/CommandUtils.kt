@@ -1,9 +1,13 @@
 package com.quesox.mineauth
 
-import com.mojang.brigadier.context.CommandContext
+import net.fabricmc.fabric.api.util.TriState
+import net.minecraft.command.CommandSource
+import net.minecraft.command.permission.PermissionLevel
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import net.minecraft.util.math.MathHelper
+import java.util.Objects
+
 
 object CommandUtils {
     // 发送成功消息
@@ -33,4 +37,10 @@ object CommandUtils {
     fun getPlayer(source: ServerCommandSource): net.minecraft.server.network.ServerPlayerEntity? {
         return if (isPlayer(source)) source.player as net.minecraft.server.network.ServerPlayerEntity else null
     }
+
+    fun permissionLevelFromInt(level: Int): PermissionLevel? {
+        return PermissionLevel.fromLevel(MathHelper.clamp(level, 0, PermissionLevel.OWNERS.level))
+    }
+
+
 }

@@ -5,20 +5,25 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
+import com.quesox.mineauth.CommandUtils.permissionLevelFromInt
 import net.minecraft.command.permission.Permission
-import net.minecraft.command.permission.PermissionLevel
-import net.minecraft.server.command.CommandManager.*
+
+import net.minecraft.server.command.CommandManager.argument
+import net.minecraft.server.command.CommandManager.literal
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 
 import java.util.concurrent.CompletableFuture
 
+
 object PassCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         dispatcher.register(
             literal("pass")
-                .requires { source -> source.permissions.hasPermission(Permission.Level(PermissionLevel.GAMEMASTERS)) }
+                .requires { source ->
+                    source.permissions.hasPermission(Permission.Level(permissionLevelFromInt(3)))
+                }
                 .then(
                     argument("playerName", StringArgumentType.word())
                         .suggests { _, builder ->
@@ -33,6 +38,7 @@ object PassCommand {
                 )
         )
     }
+
 
     private fun providePlayerNameSuggestions(builder: SuggestionsBuilder): CompletableFuture<Suggestions> {
         val remaining = builder.remaining.lowercase()
@@ -62,7 +68,7 @@ object PassCommand {
 
         if (success) {
             sendSuccess(source, LanguageManager.tr("mineauth.pass_reset_success", playerName))
-            sendSuccess(source, LanguageManager.tr("mineauth.player_joined_unregistered"), )
+            sendSuccess(source, LanguageManager.tr("mineauth.player_joined_unregistered"))
         } else {
             sendInfo(source, LanguageManager.tr("mineauth.pass_no_reset_needed", playerName))
         }
