@@ -1,0 +1,76 @@
+{
+  "mineauth.mod_name": "MineAuth",
+  "mineauth.mod_initialized": "MineAuth mod loaded",
+  "mineauth.player_joined_unregistered": "Welcome! Please use §6/register <password> <confirm> §eto register",
+  "mineauth.player_joined_registered": "Please use §7/login <password> §eto login",
+  "mineauth.auto_login_success": "Welcome back! Auto-logged in.",
+  "mineauth.auto_login_console": "§aPlayer: {0} Auto-logged",
+
+  "mineauth.register_success": "§aRegistration successful! Auto-logged in.",
+  "mineauth.register_failed": "§cRegistration failed!",
+  "mineauth.already_registered": "§cYou are already registered, please use /login!",
+  "mineauth.already_logged_in": "§aYou are already logged in!",
+  "mineauth.password_too_short": "§cPassword must be at least 6 characters!",
+  "mineauth.password_mismatch": "§cPasswords do not match!",
+  "mineauth.only_player_command": "Only players can execute this command!",
+
+  "mineauth.login_success": "§aLogin successful!",
+  "mineauth.login_failed": "§cLogin failed!",
+  "mineauth.not_registered": "§cYou are not registered, please use /register or /reg to register!",
+  "mineauth.password_incorrect": "§cIncorrect password!",
+  "mineauth.remaining_attempts": "§cIncorrect password! {0} attempts remaining",
+  "mineauth.too_many_attempts": "§cToo many login attempts, please wait {0}m{1}s and try again!",
+
+  "mineauth.logout_success": "§aLogout successful! Rejoin server to log in again.",
+  "mineauth.logout_failed": "§cLogout failed!",
+  "mineauth.not_logged_in": "§cYou are not logged in!",
+
+  "mineauth.change_password_success": "§aPassword changed successfully!",
+  "mineauth.change_password_failed": "§cFailed to change password!",
+  "mineauth.old_password_incorrect": "§cOld password is incorrect!",
+  "mineauth.password_same": "§cNew password cannot be the same as old password!",
+  "mineauth.new_password_too_short": "§cNew password must be at least 6 characters!",
+
+  "mineauth.pass_reset_success": "§aSuccessfully reset player {0}\n§7- Cleared login cooldown\n§7- Reset registration status (needs re-register)",
+  "mineauth.pass_no_reset_needed": "§ePlayer {0} does not need reset operation",
+  "mineauth.player_not_found": "§cPlayer not found: {0}\n§eHint: Player never joined server or name incorrect",
+
+  "mineauth.ip_already_registered": "§cThis IP address is already registered!\n§eRegistered account: §7{0}\n§ePlease use the original account to login",
+  "mineauth.ip_account_switch_warn": "§6[MineAuth] Account Switch Warning\n§fIP Address: §7{0}\n§fOriginal Account: §7{1}\n§fNew Account: §7{2}\n§fAction: §7{3}",
+  "mineauth.ip_same_account_kick": "§cOnly one account per IP!\n§ePlease use original account: §7{0}",
+
+  "mineauth.move_blocked": "§cPlease login before moving!",
+  "mineauth.chat_blocked": "§cPlease login before sending chat messages!",
+  "mineauth.command_blocked": "§cPlease login before executing commands!",
+  "mineauth.block_break_blocked": "§cPlease login before breaking blocks!",
+  "mineauth.block_place_blocked": "§cPlease login before placing blocks!",
+  "mineauth.item_use_blocked": "§cPlease login before using items!",
+  "mineauth.entity_interact_blocked": "§cPlease login before interacting with entities!",
+  "mineauth.entity_attack_blocked": "§cPlease login before attacking entities!",
+  "mineauth.item_pickup_blocked": "§cPlease login before picking up items!",
+
+  "mineauth.config_loaded": "Configuration loaded",
+  "mineauth.default_config_created": "Created default config file: {0}",
+  "mineauth.config_load_failed": "Failed to load config: {0}",
+  "mineauth.config_create_failed": "Failed to create config file: {0}",
+
+  "mineauth.player_data_loaded": "Loaded {0} player data",
+  "mineauth.session_data_loaded": "Loaded {0} session data",
+  "mineauth.player_data_save_failed": "Failed to save player data: {0}",
+  "mineauth.session_data_save_failed": "Failed to save session data: {0}",
+  "mineauth.player_data_load_failed": "Failed to load player data: {0}",
+  "mineauth.session_data_load_failed": "Failed to load session data: {0}",
+
+  "mineauth.ip_verification_enabled": "IP Verification: enabled",
+  "mineauth.ip_verification_disabled": "IP Verification: disabled",
+  "mineauth.same_ip_account_enabled": "Same IP One Account: enabled",
+  "mineauth.same_ip_account_disabled": "Same IP One Account: disabled",
+  "mineauth.login_limit_enabled": "Login Attempt Limit: enabled",
+  "mineauth.login_limit_disabled": "Login Attempt Limit: disabled",
+  "mineauth.session_time_set": "Session Time: {0}",
+  "mineauth.cooldown_time_set": "Cooldown Time: {0}",
+  "mineauth.max_attempts_set": "Max Login Attempts: {0}",
+
+  "mineauth.config_invalid_warning": "Warning: Multiple accounts on same IP requires IP verify to be true",
+  "mineauth.ip_multiple_account_warn": "Multiple accounts on same IP: IP={0}, Original={1}, New={2}"
+}

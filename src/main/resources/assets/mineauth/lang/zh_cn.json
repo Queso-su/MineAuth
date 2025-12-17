@@ -1,0 +1,77 @@
+{
+  "mineauth.mod_name": "MineAuth",
+  "mineauth.mod_initialized": "MineAuth 模组已加载",
+  "mineauth.player_joined_unregistered": "§e欢迎！请使用 §6/register <密码> <确认密码> §e注册账户",
+  "mineauth.player_joined_registered": "§e请使用 §7/login <密码> §e登录账户",
+  "mineauth.auto_login_success": "§a欢迎回来！已自动登录。",
+  "mineauth.auto_login_console": "§a玩家: {0} 已自动登录",
+
+  "mineauth.register_success": "§a注册成功！已自动登录。",
+  "mineauth.register_failed": "§c注册失败！",
+  "mineauth.already_registered": "§c您已经注册过了，请使用 /login 登录！",
+  "mineauth.already_logged_in": "§a您已经登录了！",
+  "mineauth.password_too_short": "§c密码长度至少为6位！",
+  "mineauth.password_mismatch": "§c两次输入的密码不一致！",
+  "mineauth.only_player_command": "只有玩家可以执行此命令！",
+
+  "mineauth.login_success": "§a登录成功！",
+
+  "mineauth.login_failed": "§c登录失败！",
+  "mineauth.not_registered": "§c您还没有注册，请使用 /register 或者 /reg 注册账户！",
+  "mineauth.password_incorrect": "§c密码错误！",
+  "mineauth.remaining_attempts": "§c密码错误！还剩 {0} 次尝试机会",
+  "mineauth.too_many_attempts": "§c登录失败次数过多，请等待 {0}分{1}秒后再试！",
+
+  "mineauth.logout_success": "§a登出成功！重新加入服务器后需要重新登录。",
+  "mineauth.logout_failed": "§c登出失败！",
+  "mineauth.not_logged_in": "§c您还没有登录！",
+
+  "mineauth.change_password_success": "§a密码修改成功！",
+  "mineauth.change_password_failed": "§c密码修改失败！",
+  "mineauth.old_password_incorrect": "§c原密码错误！",
+  "mineauth.password_same": "§c新密码不能与旧密码相同！",
+  "mineauth.new_password_too_short": "§c新密码长度至少为6位！",
+
+  "mineauth.pass_reset_success": "§a成功重置玩家 {0} 的状态\n§7- 已清除登录冷却\n§7- 已重置注册状态（需要重新注册）",
+  "mineauth.pass_no_reset_needed": "§e玩家 {0} 不需要重置操作",
+  "mineauth.player_not_found": "§c未找到玩家: {0}\n§e提示: 该玩家从未进入过服务器或名称输入错误",
+
+  "mineauth.ip_already_registered": "§c该IP地址已经注册过账号！\n§e已注册账号: §7{0}\n§e请使用原账号登录",
+  "mineauth.ip_account_switch_warn": "§6[MineAuth] 账号切换警告\n§fIP地址: §7{0}\n§f原账号: §7{1}\n§f新账号: §7{2}\n§f行为: §7{3}",
+  "mineauth.ip_same_account_kick": "§c同一IP只能有一个账号！\n§e请使用原账号: §7{0}",
+
+  "mineauth.move_blocked": "§c请先登录后再移动！",
+  "mineauth.chat_blocked": "§c请先登录后再发送聊天消息！",
+  "mineauth.command_blocked": "§c请先登录后再执行命令！",
+  "mineauth.block_break_blocked": "§c请先登录后再破坏方块！",
+  "mineauth.block_place_blocked": "§c请先登录后再放置方块！",
+  "mineauth.item_use_blocked": "§c请先登录后再使用物品！",
+  "mineauth.entity_interact_blocked": "§c请先登录后再与实体交互！",
+  "mineauth.entity_attack_blocked": "§c请先登录后再攻击实体！",
+  "mineauth.item_pickup_blocked": "§c请先登录后再拾取物品！",
+
+  "mineauth.config_loaded": "配置加载完成",
+  "mineauth.default_config_created": "已创建默认配置文件: {0}",
+  "mineauth.config_load_failed": "加载配置失败: {0}",
+  "mineauth.config_create_failed": "创建配置文件失败: {0}",
+
+  "mineauth.player_data_loaded": "已加载 {0} 个玩家的数据",
+  "mineauth.session_data_loaded": "已加载 {0} 个会话数据",
+  "mineauth.player_data_save_failed": "保存玩家数据失败: {0}",
+  "mineauth.session_data_save_failed": "保存会话数据失败: {0}",
+  "mineauth.player_data_load_failed": "加载玩家数据失败: {0}",
+  "mineauth.session_data_load_failed": "加载会话数据失败: {0}",
+
+  "mineauth.ip_verification_enabled": "IP验证: 已启用",
+  "mineauth.ip_verification_disabled": "IP验证: 已禁用",
+  "mineauth.same_ip_account_enabled": "同一IP绑定账号: 已启用",
+  "mineauth.same_ip_account_disabled": "同一IP绑定账号: 已禁用",
+  "mineauth.login_limit_enabled": "登录尝试限制: 已启用",
+  "mineauth.login_limit_disabled": "登录尝试限制: 已禁用",
+  "mineauth.session_time_set": "会话过期时间: {0}",
+  "mineauth.cooldown_time_set": "冷却时间: {0}",
+  "mineauth.max_attempts_set": "最大登录尝试次数: {0}",
+
+  "mineauth.config_invalid_warning": "警告: 同一IP注册多个账号 需要 IP检测 为 true 才能生效",
+  "mineauth.ip_multiple_account_warn": "同一IP注册多个账号: IP={0}, 原账号={1}, 新账号={2}"
+}

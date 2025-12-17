@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "mineauth",
+	"version": "${version}",
+	"name": "MineAuth",
+	"description": "一个Minecraft登录验证模组，保护你的服务器安全",
+	"authors": [
+		"Queso"
+	],
+	"contact": {
+		"homepage": "https://github.com/queso-su/mineauth"
+	},
+	"license": "MIT",
+	"icon": "assets/mineauth/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"value": "com.quesox.mineauth.MineAuth",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		{
+		"config":"mineauth.mixins.json",
+		"environment": "server"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.15.0",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}

@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "package": "com.quesox.mineauth.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+
+
+    "EntityInteractionMixin",
+    "ItemEntityMixin",
+
+    "PlayerDamageMixin",
+    "ServerPlayerEntityMixin",
+    "ServerPlayerInteractionManagerMixin",
+    "ServerPlayNetworkHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+	}
+}
