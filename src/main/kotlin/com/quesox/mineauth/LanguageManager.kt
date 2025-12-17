@@ -66,7 +66,7 @@ object LanguageManager {
                 }
             } catch (_: Exception) {
                 // 使用默认语言
-                currentLanguage = Language.AUTO
+                currentLanguage = Language.EN_US
             }
         }
     }

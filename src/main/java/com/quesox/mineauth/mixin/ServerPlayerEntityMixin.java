@@ -27,7 +27,7 @@ public class ServerPlayerEntityMixin {
 
     // 每20个tick检查一次
     @Unique
-    private static final int CHECK_INTERVAL = 20;
+    private static final int CHECK_INTERVAL = 10;
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
@@ -46,7 +46,7 @@ public class ServerPlayerEntityMixin {
 
                 // 检查玩家是否移动了
                 double distance = player.squaredDistanceTo(mineAuth$initialPosition);
-                if (distance > 2) { // 如果移动超过0.3格
+                if (distance > 0.1) { // 如果移动超过0.3格
                     // 传送回初始位置
                     player.teleport(
                             player.getEntityWorld(),

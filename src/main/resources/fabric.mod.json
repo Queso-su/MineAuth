@@ -8,7 +8,7 @@
 		"Queso"
 	],
 	"contact": {
-		"homepage": "https://github.com/queso-su/mineauth"
+		"homepage": "https://github.com/Queso-su/MineAuth"
 	},
 	"license": "MIT",
 	"icon": "assets/mineauth/icon.png",
@@ -23,13 +23,13 @@
 	},
 	"mixins": [
 		{
-		"config":"mineauth.mixins.json",
-		"environment": "server"
+			"config":"mineauth.mixins.json",
+			"environment": "server"
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.15.0",
-		"minecraft": "~1.21.11",
+		"fabricloader": ">=0.16.9",
+		"minecraft": ">1.21.0",
 		"java": ">=17",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"
