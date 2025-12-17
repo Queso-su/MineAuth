@@ -49,7 +49,7 @@ public class ServerPlayerEntityMixin {
                 if (distance > 2) { // 如果移动超过0.3格
                     // 传送回初始位置
                     player.teleport(
-                            (ServerWorld) player.getEntityWorld(),
+                            player.getEntityWorld(),
                             mineAuth$initialPosition.x,
                             mineAuth$initialPosition.y,
                             mineAuth$initialPosition.z,

@@ -94,10 +94,10 @@ data class PlayerSession(
     }
 
     // 踢出玩家
-    fun kickPlayer() {
-        isKicked = true
-        lastFailedTime = System.currentTimeMillis()
-    }
+    //fun kickPlayer() {
+    //    isKicked = true
+    //    lastFailedTime = System.currentTimeMillis()
+    //}
 
     // 检查是否可以解除锁定（冷却时间已过）
     fun checkAndUnlock(): Boolean {

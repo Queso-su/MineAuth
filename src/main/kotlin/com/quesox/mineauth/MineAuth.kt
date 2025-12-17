@@ -169,7 +169,7 @@ object MineAuth : ModInitializer {
 
 			val address = player.networkHandler.connectionAddress
 			address.toString().removePrefix("/").split(":").first()
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 			"unknown"
 		}
 	}
@@ -433,14 +433,14 @@ object MineAuth : ModInitializer {
 	}
 
 	// 获取所有玩家数据（用于调试）
-	fun getAllPlayerData(): Map<UUID, PlayerData> {
-		return playerDataMap.toMap()
-	}
+	//fun getAllPlayerData(): Map<UUID, PlayerData> {
+	//	return playerDataMap.toMap()
+	//}
 
 	// 获取IP到UUID的映射（用于调试）
-	fun getIpToUuidMap(): Map<String, UUID> {
-		return ipToUuidMap.toMap()
-	}
+	//fun getIpToUuidMap(): Map<String, UUID> {
+	//	return ipToUuidMap.toMap()
+	//}
 
     // ===== 原有方法保持不变 =====
     @JvmStatic
@@ -525,7 +525,7 @@ object MineAuth : ModInitializer {
 			val digest = MessageDigest.getInstance("SHA-256")
 			val hash = digest.digest(password.toByteArray(Charsets.UTF_8))
 			hash.joinToString("") { "%02x".format(it) }
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 			password // 失败时返回原始密码
 		}
 	}

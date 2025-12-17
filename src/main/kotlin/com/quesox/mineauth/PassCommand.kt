@@ -21,7 +21,7 @@ object PassCommand {
                 .requires { source -> source.permissions.hasPermission(Permission.Level(PermissionLevel.GAMEMASTERS)) }
                 .then(
                     argument("playerName", StringArgumentType.word())
-                        .suggests { context, builder ->
+                        .suggests { _, builder ->
                             providePlayerNameSuggestions(builder)
                         }
                         .executes { context ->
