@@ -1,10 +1,13 @@
 {
   "mineauth.mod_name": "MineAuth",
   "mineauth.mod_initialized": "MineAuth mod loaded",
-  "mineauth.player_joined_unregistered": "Welcome! Please use §6/register <password> <confirm> §eto register",
-  "mineauth.player_joined_registered": "Please use §7/login <password> §eto login",
-  "mineauth.auto_login_success": "Welcome back! Auto-logged in.",
-  "mineauth.auto_login_console": "§aPlayer: {0} Auto-logged",
+  "mineauth.initialization_complete": "MineAuth initialization complete!",
+  "mineauth.data_saved": "MineAuth data saved",
+
+  "mineauth.player_joined_unregistered": "§eWelcome! Please use §6/register <password> <confirm> §eto register",
+  "mineauth.player_joined_registered": "§ePlease use §7/login <password> §eto login",
+  "mineauth.auto_login_success": "§aWelcome back! Auto-logged in.",
+  "mineauth.auto_logged_in": "auto logged in",
 
   "mineauth.register_success": "§aRegistration successful! Auto-logged in.",
   "mineauth.register_failed": "§cRegistration failed!",
@@ -13,6 +16,7 @@
   "mineauth.password_too_short": "§cPassword must be at least 6 characters!",
   "mineauth.password_mismatch": "§cPasswords do not match!",
   "mineauth.only_player_command": "Only players can execute this command!",
+  "mineauth.player_registered": "Player {0} (UUID: {1}, IP: {2}) registered successfully",
 
   "mineauth.login_success": "§aLogin successful!",
   "mineauth.login_failed": "§cLogin failed!",
@@ -20,6 +24,8 @@
   "mineauth.password_incorrect": "§cIncorrect password!",
   "mineauth.remaining_attempts": "§cIncorrect password! {0} attempts remaining",
   "mineauth.too_many_attempts": "§cToo many login attempts, please wait {0}m{1}s and try again!",
+  "mineauth.player_logged_in": "Player {0} (UUID: {1}, IP: {2}) logged in successfully",
+  "mineauth.kicked_too_many_attempts": "kicked due to too many login attempts, cooldown remaining: {0}m{1}s",
 
   "mineauth.logout_success": "§aLogout successful! Rejoin server to log in again.",
   "mineauth.logout_failed": "§cLogout failed!",
@@ -38,6 +44,10 @@
   "mineauth.ip_already_registered": "§cThis IP address is already registered!\n§eRegistered account: §7{0}\n§ePlease use the original account to login",
   "mineauth.ip_account_switch_warn": "§6[MineAuth] Account Switch Warning\n§fIP Address: §7{0}\n§fOriginal Account: §7{1}\n§fNew Account: §7{2}\n§fAction: §7{3}",
   "mineauth.ip_same_account_kick": "§cOnly one account per IP!\n§ePlease use original account: §7{0}",
+  "mineauth.ip_multiple_account_warn": "Multiple accounts on same IP: IP={0}, Original={1}, New={2}",
+  "mineauth.ip_switch_attempt": "Attempt to use new account from same IP",
+  "mineauth.register_new_account": "Register new account on same IP",
+  "mineauth.login_different_account": "Login different account on same IP",
 
   "mineauth.move_blocked": "§cPlease login before moving!",
   "mineauth.chat_blocked": "§cPlease login before sending chat messages!",
@@ -53,6 +63,10 @@
   "mineauth.default_config_created": "Created default config file: {0}",
   "mineauth.config_load_failed": "Failed to load config: {0}",
   "mineauth.config_create_failed": "Failed to create config file: {0}",
+  "mineauth.unparseable_config_line": "Cannot parse config line: {0}",
+  "mineauth.unknown_config_key": "Unknown config key: {0}",
+  "mineauth.parse_time_error": "Error parsing time format: {0}, using default value",
+  "mineauth.config_invalid_warning": "Warning: sameIPsameAccount requires ipVerify to be true",
 
   "mineauth.player_data_loaded": "Loaded {0} player data",
   "mineauth.session_data_loaded": "Loaded {0} session data",
@@ -70,7 +84,9 @@
   "mineauth.session_time_set": "Session Time: {0}",
   "mineauth.cooldown_time_set": "Cooldown Time: {0}",
   "mineauth.max_attempts_set": "Max Login Attempts: {0}",
+  "mineauth.language_set": "Language set to: {0}",
 
-  "mineauth.config_invalid_warning": "Warning: Multiple accounts on same IP requires IP verify to be true",
-  "mineauth.ip_multiple_account_warn": "Multiple accounts on same IP: IP={0}, Original={1}, New={2}"
+  "mineauth.notify_admin_failed": "Failed to notify admin: {0}",
+  "mineauth.unknown": "未知"
+
 }

@@ -1,4 +1,3 @@
-// MineAuth.kt (添加相关功能)
 package com.quesox.mineauth
 
 import net.fabricmc.api.ModInitializer
@@ -22,7 +21,6 @@ object MineAuth : ModInitializer {
 	private val sessionFile: Path = Paths.get("config/mineauth/sessions.json")
 
 	// 服务器实例
-
 	private var minecraftServer: net.minecraft.server.MinecraftServer? = null
 
 	// UUID -> 玩家数据
@@ -39,20 +37,41 @@ object MineAuth : ModInitializer {
 	private val ipToUuidMap = mutableMapOf<String, UUID>()
 
 	override fun onInitialize() {
-		logger.info("MineAuth 模组正在初始化...")
+		logger.info(LanguageManager.tr("mineauth.mod_initialized").string)
 
-		// 加载配置
-		MineAuthConfig.load()
+		// 监听服务器启动
+		ServerLifecycleEvents.SERVER_STARTING.register { server ->
+			minecraftServer = server
+			LanguageManager.initialize(server.runDirectory)
 
-		// 创建配置文件目录
-		val configDir = File("config/mineauth")
-		if (!configDir.exists()) {
-			configDir.mkdirs()
+			MineAuthConfig.load(server.runDirectory)
+
+			// 设置语言管理器语言
+			val language = MineAuthConfig.config.getLanguage()
+			if (language != LanguageManager.Language.AUTO) {
+				// 更新语言管理器
+				LanguageManager.updateLanguage(language, server.runDirectory)
+			}
+
+			// 创建配置文件目录
+			val configDir = File("config/mineauth")
+			if (!configDir.exists()) {
+				configDir.mkdirs()
+			}
+
+			// 加载玩家数据
+			loadPlayerData()
+			loadSessions()
+
 		}
 
-		// 加载玩家数据
-		loadPlayerData()
-		loadSessions()
+		// 监听服务器停止
+		ServerLifecycleEvents.SERVER_STOPPING.register {
+			savePlayerData()
+			saveSessions()
+			minecraftServer = null
+			logger.info(LanguageManager.tr("mineauth.data_saved").string)
+		}
 
 		// 注册命令
 		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
@@ -78,7 +97,7 @@ object MineAuth : ModInitializer {
 					val existingPlayerData = playerDataMap[existingUuid]
 					if (existingPlayerData != null) {
 						// 提示玩家
-						player.sendMessage(Text.literal("§c该IP地址已注册过账号！"), false)
+						player.sendMessage(LanguageManager.tr("mineauth.ip_already_registered", existingPlayerData.name), false)
 						player.sendMessage(Text.literal("§e原账号: §7${existingPlayerData.name}"), false)
 						player.sendMessage(Text.literal("§e请使用原账号登录，或联系管理员"), false)
 
@@ -87,13 +106,9 @@ object MineAuth : ModInitializer {
 							existingPlayerData.name,
 							playerName,
 							ipAddress,
-							"尝试从同一IP使用新账号"
+							LanguageManager.tr("mineauth.ip_switch_attempt").string
 						)
 
-						// 踢出玩家
-						//player.networkHandler.disconnect(
-						//	Text.literal("§c同一IP只能有一个账号！\n§e请使用原账号: §7${existingPlayerData.name}")
-						//)
 						return@register
 					}
 				}
@@ -110,34 +125,36 @@ object MineAuth : ModInitializer {
 				val seconds = remainingTime % 60
 
 				val kickMessage = if (minutes > 0) {
-					Text.literal("§c登录尝试次数过多，请等待 ${minutes}分${seconds}秒后再进入服务器！")
+					LanguageManager.tr("mineauth.too_many_attempts", minutes, seconds)
 				} else {
-					Text.literal("§c登录尝试次数过多，请等待 ${seconds}秒后再进入服务器！")
+					LanguageManager.tr("mineauth.too_many_attempts", 0, seconds)
 				}
 
 				player.networkHandler.disconnect(kickMessage)
-				logger.info("玩家 $playerName 因登录尝试过多被踢出，冷却时间剩余: ${minutes}分${seconds}秒")
+				logger.info(LanguageManager.tr("mineauth.kicked_too_many_attempts", minutes, seconds).string)
 				return@register
 			}
 
 			// 检查是否可以解除锁定
-			if (session != null) {
-				session.checkAndUnlock()
-			}
+			session?.checkAndUnlock()
 
 			// 检查是否自动登录
 			if (session != null && session.isValid(ipAddress, checkIp)) {
 				session.loggedIn = true
 				session.lastLoginTime = System.currentTimeMillis()
 				session.resetFailedAttempts()
-				player.sendMessage(Text.literal("§a欢迎回来！已自动登录。"), true)
-				logger.info("玩家 $playerName 已自动登录")
+				player.sendMessage(LanguageManager.tr("mineauth.auto_login_success"), true)
+				logger.info(LanguageManager.tr("mineauth.auto_logged_in").string)
 			} else {
 				// 需要登录或注册
 				if (isPlayerRegistered(uuid)) {
-					player.sendMessage(Text.literal("§e请使用 §7/login <密码> §e登录账户"), false)
+					player.sendMessage(LanguageManager.tr("mineauth.player_joined_registered"), false)
+					player.sendMessage(LanguageManager.tr("mineauth.player_joined_registered"), false)
+
 				} else {
-					player.sendMessage(Text.literal("§e欢迎！请使用 §6/register <密码> <确认密码> §e注册账户"), false)
+					player.sendMessage(LanguageManager.tr("mineauth.player_joined_unregistered"), false)
+					player.sendMessage(LanguageManager.tr("mineauth.not_registered"), true)
+
 				}
 
 				// 更新会话
@@ -145,31 +162,16 @@ object MineAuth : ModInitializer {
 				saveSessions()
 			}
 		}
-		// 监听服务器启动
-		ServerLifecycleEvents.SERVER_STARTING.register { server ->
-			minecraftServer = server
-			//logger.info("MineAuth 已连接到 Minecraft 服务器")
-		}
 
-
-		// 监听服务器停止
-		ServerLifecycleEvents.SERVER_STOPPING.register {
-			savePlayerData()
-			saveSessions()
-			minecraftServer = null
-			//logger.info("MineAuth 数据已保存")
-		}
-
-		logger.info("MineAuth 模组初始化完成！")
+		logger.info(LanguageManager.tr("mineauth.initialization_complete").string)
 	}
 
 	// 简化IP地址获取
 	private fun getSimplePlayerIpAddress(player: net.minecraft.server.network.ServerPlayerEntity): String {
 		return try {
-
 			val address = player.networkHandler.connectionAddress
 			address.toString().removePrefix("/").split(":").first()
-		} catch (_: Exception) {
+		} catch (e: Exception) {
 			"unknown"
 		}
 	}
@@ -217,9 +219,9 @@ object MineAuth : ModInitializer {
 						}
 				}
 			}
-			logger.info("已加载 ${playerDataMap.size} 个玩家的数据")
+			logger.info(LanguageManager.tr("mineauth.player_data_loaded", playerDataMap.size).string)
 		} catch (e: Exception) {
-			logger.error("加载玩家数据失败: ${e.message}")
+			logger.error(LanguageManager.tr("mineauth.player_data_load_failed", e.message ?: "unknown").string)
 		}
 	}
 
@@ -251,9 +253,9 @@ object MineAuth : ModInitializer {
 						}
 				}
 			}
-			logger.info("已加载 ${playerSessions.size} 个会话数据")
+			logger.info(LanguageManager.tr("mineauth.session_data_loaded", playerSessions.size).string)
 		} catch (e: Exception) {
-			logger.error("加载会话数据失败: ${e.message}")
+			logger.error(LanguageManager.tr("mineauth.session_data_load_failed", e.message ?: "unknown").string)
 		}
 	}
 
@@ -266,7 +268,7 @@ object MineAuth : ModInitializer {
 
 			playerDataFile.writeText(data)
 		} catch (e: Exception) {
-			logger.error("保存玩家数据失败: ${e.message}")
+			logger.error(LanguageManager.tr("mineauth.player_data_save_failed", e.message ?: "unknown").string)
 		}
 	}
 
@@ -281,7 +283,7 @@ object MineAuth : ModInitializer {
 
 			sessionFile.writeText(data)
 		} catch (e: Exception) {
-			logger.error("保存会话数据失败: ${e.message}")
+			logger.error(LanguageManager.tr("mineauth.session_data_save_failed", e.message ?: "unknown").string)
 		}
 	}
 
@@ -294,29 +296,29 @@ object MineAuth : ModInitializer {
 	) {
 		try {
 			val server = minecraftServer ?: return
-			val adminMessage = """
-                §6[MineAuth] 账号切换警告
-                §fIP地址: §7$ipAddress
-                §f原账号: §7$originalAccount
-                §f新账号: §7$newAccount
-                §f行为: §7$reason
-            """.trimIndent()
+
+			// 使用翻译构建管理员消息
+			val adminMessage = LanguageManager.tr(
+				"mineauth.ip_account_switch_warn",
+				ipAddress,
+				originalAccount,
+				newAccount,
+				reason
+			)
 
 			// 发送给所有在线的管理员（权限等级2以上）
 			for (player in server.playerManager.playerList) {
 				if (player.permissions.hasPermission(Permission.Level(PermissionLevel.GAMEMASTERS))) {
-					player.sendMessage(Text.literal(adminMessage))
+					player.sendMessage(adminMessage)
 				}
 			}
 
-			// 记录到日志
-			logger.warn("账号切换警告: IP=$ipAddress, 原账号=$originalAccount, 新账号=$newAccount, 行为=$reason")
+			// 记录到日志（使用翻译）
+			logger.warn(LanguageManager.tr("mineauth.ip_multiple_account_warn", ipAddress, originalAccount, newAccount).string)
 		} catch (e: Exception) {
-			logger.error("通知管理员失败: ${e.message}")
+			logger.error(LanguageManager.tr("mineauth.notify_admin_failed", e.message ?: "unknown").string)
 		}
 	}
-
-
 
 	// 检查同一IP是否已有其他账号（用于注册时）
 	fun isIpAlreadyRegistered(ipAddress: String, excludeUuid: UUID? = null): Pair<Boolean, String?> {
@@ -344,13 +346,13 @@ object MineAuth : ModInitializer {
 			val (ipRegistered, existingAccount) = isIpAlreadyRegistered(ipAddress)
 			if (ipRegistered) {
 				// 记录日志但不阻止，因为配置可能被修改
-				logger.warn("同一IP注册多个账号: IP=$ipAddress, 原账号=$existingAccount, 新账号=$playerName")
+				logger.warn(LanguageManager.tr("mineauth.ip_multiple_account_warn", ipAddress, existingAccount ?: "unknown", playerName).string)
 				// 通知管理员
 				notifyAdminsAboutAccountSwitch(
-					existingAccount ?: "未知",
+					existingAccount ?: LanguageManager.tr("mineauth.unknown").string,
 					playerName,
 					ipAddress,
-					"同一IP注册新账号"
+					LanguageManager.tr("mineauth.register_new_account").string
 				)
 			}
 		}
@@ -369,8 +371,8 @@ object MineAuth : ModInitializer {
 		savePlayerData()
 		saveSessions()
 
-		// 记录注册信息
-		logger.info("玩家 $playerName (UUID: $uuid, IP: $ipAddress) 注册成功")
+		// 记录注册信息（使用翻译）
+		logger.info(LanguageManager.tr("mineauth.player_registered", playerName, uuid, ipAddress).string)
 		return true
 	}
 
@@ -388,10 +390,10 @@ object MineAuth : ModInitializer {
 			if (ipRegistered && existingAccount != playerName) {
 				// 通知管理员
 				notifyAdminsAboutAccountSwitch(
-					existingAccount ?: "未知",
+					existingAccount ?: LanguageManager.tr("mineauth.unknown").string,
 					playerName,
 					ipAddress,
-					"同一IP登录不同账号"
+					LanguageManager.tr("mineauth.login_different_account").string
 				)
 			}
 		}
@@ -399,10 +401,9 @@ object MineAuth : ModInitializer {
 		playerSessions[uuid] = session
 		saveSessions()
 
-		logger.info("玩家 $playerName (UUID: $uuid, IP: $ipAddress) 登录成功")
+		logger.info(LanguageManager.tr("mineauth.player_logged_in", playerName, uuid, ipAddress).string)
 		return true
 	}
-
 
 	// 获取所有玩家名称（从多个来源）
 	fun getAllPlayerNames(): Set<String> {
@@ -432,22 +433,12 @@ object MineAuth : ModInitializer {
 		return playerData != null || sessionRemoved
 	}
 
-	// 获取所有玩家数据（用于调试）
-	//fun getAllPlayerData(): Map<UUID, PlayerData> {
-	//	return playerDataMap.toMap()
-	//}
-
-	// 获取IP到UUID的映射（用于调试）
-	//fun getIpToUuidMap(): Map<String, UUID> {
-	//	return ipToUuidMap.toMap()
-	//}
-
-    // ===== 原有方法保持不变 =====
-    @JvmStatic
-    fun isPlayerLoggedIn(uuid: UUID): Boolean {
-        val session = playerSessions[uuid] ?: return false
-        return session.loggedIn && !MineAuthConfig.isSessionExpired(session.lastLoginTime)
-    }
+	// ===== 原有方法保持不变 =====
+	@JvmStatic
+	fun isPlayerLoggedIn(uuid: UUID): Boolean {
+		val session = playerSessions[uuid] ?: return false
+		return session.loggedIn && !MineAuthConfig.isSessionExpired(session.lastLoginTime)
+	}
 
 	fun isValidSession(uuid: UUID, ipAddress: String): Boolean {
 		val session = playerSessions[uuid] ?: return false
@@ -525,7 +516,7 @@ object MineAuth : ModInitializer {
 			val digest = MessageDigest.getInstance("SHA-256")
 			val hash = digest.digest(password.toByteArray(Charsets.UTF_8))
 			hash.joinToString("") { "%02x".format(it) }
-		} catch (_: Exception) {
+		} catch (e: Exception) {
 			password // 失败时返回原始密码
 		}
 	}

@@ -1,4 +1,3 @@
-// PlayerDamageMixin.java (新建文件)
 package com.quesox.mineauth.mixin;
 
 import com.quesox.mineauth.MineAuth;
@@ -28,8 +27,6 @@ public class PlayerDamageMixin {
             // 阻止所有其他伤害
             cir.setReturnValue(false);
             cir.cancel();
-
-
         }
     }
 }

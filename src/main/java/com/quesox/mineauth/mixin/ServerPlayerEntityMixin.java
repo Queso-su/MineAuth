@@ -1,7 +1,7 @@
-// ServerPlayerEntityMixin.java (优化版)
 package com.quesox.mineauth.mixin;
 
 import com.quesox.mineauth.MineAuth;
+import com.quesox.mineauth.LanguageManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
@@ -25,9 +25,9 @@ public class ServerPlayerEntityMixin {
     @Unique
     private int mineAuth$tickCounter = 0;
 
-    // 每40个tick检查一次
+    // 每20个tick检查一次
     @Unique
-    private static final int CHECK_INTERVAL = 40;
+    private static final int CHECK_INTERVAL = 20;
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
@@ -64,7 +64,7 @@ public class ServerPlayerEntityMixin {
 
                     // 发送消息（有冷却时间避免刷屏）
                     if (mineAuth$messageCooldown <= 0) {
-                        player.sendMessage(net.minecraft.text.Text.literal("§c请先登录后再移动！"), true);
+                        player.sendMessage(LanguageManager.INSTANCE.tr("mineauth.move_blocked"), true);
                         mineAuth$messageCooldown = 20; // 1秒冷却（减少为1秒）
                     }
                 }

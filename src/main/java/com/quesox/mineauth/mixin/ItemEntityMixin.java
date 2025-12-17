@@ -1,7 +1,7 @@
-// ItemEntityMixin.java (新建文件，更好的方法)
 package com.quesox.mineauth.mixin;
 
 import com.quesox.mineauth.MineAuth;
+import com.quesox.mineauth.LanguageManager;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,8 +17,9 @@ public abstract class ItemEntityMixin {
     private void onPlayerCollision(PlayerEntity player, CallbackInfo ci) {
         // 检查是否是服务端玩家
         if (player instanceof net.minecraft.server.network.ServerPlayerEntity serverPlayer) {
-
             if (!MineAuth.isPlayerLoggedIn(serverPlayer.getUuid())) {
+                // 发送消息提醒玩家
+                serverPlayer.sendMessage(LanguageManager.INSTANCE.tr("mineauth.item_pickup_blocked"), true);
                 // 阻止物品被拾取
                 ci.cancel();
             }

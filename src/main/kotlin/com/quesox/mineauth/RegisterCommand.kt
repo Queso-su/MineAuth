@@ -1,4 +1,3 @@
-// RegisterCommand.kt (添加 sameIPsameAccount 检查)
 package com.quesox.mineauth
 
 import com.mojang.brigadier.CommandDispatcher
@@ -29,22 +28,22 @@ object RegisterCommand {
     }
 
     private fun execute(source: ServerCommandSource, password: String, confirmPassword: String): Int {
-        val player = source.player ?: return sendError(source, "只有玩家可以执行此命令！")
+        val player = source.player ?: return sendError(source, LanguageManager.tr("mineauth.only_player_command"))
 
         if (MineAuth.isPlayerLoggedIn(player.uuid)) {
-            return sendMessage(source, "§a您已经登录了！", Formatting.GREEN)
+            return sendMessage(source, LanguageManager.tr("mineauth.already_logged_in"), Formatting.GREEN)
         }
 
         if (password.length < 6) {
-            return sendError(source, "§c密码长度至少为6位！")
+            return sendError(source, LanguageManager.tr("mineauth.password_too_short"))
         }
 
         if (password != confirmPassword) {
-            return sendError(source, "§c两次输入的密码不一致！")
+            return sendError(source, LanguageManager.tr("mineauth.password_mismatch"))
         }
 
         if (MineAuth.isPlayerRegistered(player.uuid)) {
-            return sendError(source, "§c您已经注册过了，请使用 /login 登录！")
+            return sendError(source, LanguageManager.tr("mineauth.already_registered"))
         }
 
         val ipAddress = MineAuth.getPlayerIpAddress(player)
@@ -53,12 +52,7 @@ object RegisterCommand {
         if (MineAuthConfig.config.ipVerify && MineAuthConfig.config.sameIPSameAccount) {
             val (ipRegistered, existingAccount) = MineAuth.isIpAlreadyRegistered(ipAddress)
             if (ipRegistered) {
-                val message = StringBuilder()
-                message.append("§c该IP地址已经注册过账号！\n")
-                message.append("§e已注册账号: §7$existingAccount\n")
-                message.append("§e请使用原账号登录")
-
-                return sendError(source, message.toString())
+                return sendError(source, LanguageManager.tr("mineauth.ip_already_registered", existingAccount ?: LanguageManager.tr("mineauth.unknown").string))
             }
         }
 
@@ -68,19 +62,19 @@ object RegisterCommand {
                 password,
                 ipAddress
             )) {
-            sendMessage(source, "§a注册成功！已自动登录。", Formatting.GREEN)
+            sendMessage(source, LanguageManager.tr("mineauth.register_success"), Formatting.GREEN)
         } else {
-            sendError(source, "§c注册失败！")
+            sendError(source, LanguageManager.tr("mineauth.register_failed"))
         }
     }
 
-    private fun sendMessage(source: ServerCommandSource, message: String, formatting: Formatting): Int {
-        source.sendMessage(Text.literal(message).styled { it.withColor(formatting) })
+    private fun sendMessage(source: ServerCommandSource, message: Text, formatting: Formatting): Int {
+        source.sendMessage(message.copy().styled { it.withColor(formatting) })
         return 1
     }
 
-    private fun sendError(source: ServerCommandSource, message: String): Int {
-        source.sendMessage(Text.literal(message))
+    private fun sendError(source: ServerCommandSource, message: Text): Int {
+        source.sendMessage(message.copy().styled { it.withColor(Formatting.RED) })
         return 0
     }
 }

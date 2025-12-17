@@ -1,10 +1,13 @@
 {
   "mineauth.mod_name": "MineAuth",
   "mineauth.mod_initialized": "MineAuth 模组已加载",
+  "mineauth.initialization_complete": "MineAuth 模组初始化完成！",
+  "mineauth.data_saved": "MineAuth 数据已保存",
+
   "mineauth.player_joined_unregistered": "§e欢迎！请使用 §6/register <密码> <确认密码> §e注册账户",
   "mineauth.player_joined_registered": "§e请使用 §7/login <密码> §e登录账户",
   "mineauth.auto_login_success": "§a欢迎回来！已自动登录。",
-  "mineauth.auto_login_console": "§a玩家: {0} 已自动登录",
+  "mineauth.auto_logged_in": "已自动登录",
 
   "mineauth.register_success": "§a注册成功！已自动登录。",
   "mineauth.register_failed": "§c注册失败！",
@@ -13,14 +16,16 @@
   "mineauth.password_too_short": "§c密码长度至少为6位！",
   "mineauth.password_mismatch": "§c两次输入的密码不一致！",
   "mineauth.only_player_command": "只有玩家可以执行此命令！",
+  "mineauth.player_registered": "玩家 {0} (UUID: {1}, IP: {2}) 注册成功",
 
   "mineauth.login_success": "§a登录成功！",
-
   "mineauth.login_failed": "§c登录失败！",
   "mineauth.not_registered": "§c您还没有注册，请使用 /register 或者 /reg 注册账户！",
   "mineauth.password_incorrect": "§c密码错误！",
   "mineauth.remaining_attempts": "§c密码错误！还剩 {0} 次尝试机会",
   "mineauth.too_many_attempts": "§c登录失败次数过多，请等待 {0}分{1}秒后再试！",
+  "mineauth.player_logged_in": "玩家 {0} (UUID: {1}, IP: {2}) 登录成功",
+  "mineauth.kicked_too_many_attempts": "因登录尝试过多被踢出，冷却时间剩余: {0}分{1}秒",
 
   "mineauth.logout_success": "§a登出成功！重新加入服务器后需要重新登录。",
   "mineauth.logout_failed": "§c登出失败！",
@@ -39,6 +44,10 @@
   "mineauth.ip_already_registered": "§c该IP地址已经注册过账号！\n§e已注册账号: §7{0}\n§e请使用原账号登录",
   "mineauth.ip_account_switch_warn": "§6[MineAuth] 账号切换警告\n§fIP地址: §7{0}\n§f原账号: §7{1}\n§f新账号: §7{2}\n§f行为: §7{3}",
   "mineauth.ip_same_account_kick": "§c同一IP只能有一个账号！\n§e请使用原账号: §7{0}",
+  "mineauth.ip_multiple_account_warn": "同一IP注册多个账号: IP={0}, 原账号={1}, 新账号={2}",
+  "mineauth.ip_switch_attempt": "尝试从同一IP使用新账号",
+  "mineauth.register_new_account": "同一IP注册新账号",
+  "mineauth.login_different_account": "同一IP登录不同账号",
 
   "mineauth.move_blocked": "§c请先登录后再移动！",
   "mineauth.chat_blocked": "§c请先登录后再发送聊天消息！",
@@ -54,6 +63,10 @@
   "mineauth.default_config_created": "已创建默认配置文件: {0}",
   "mineauth.config_load_failed": "加载配置失败: {0}",
   "mineauth.config_create_failed": "创建配置文件失败: {0}",
+  "mineauth.unparseable_config_line": "无法解析配置行: {0}",
+  "mineauth.unknown_config_key": "未知配置项: {0}",
+  "mineauth.parse_time_error": "解析时间格式错误: {0}，使用默认值",
+  "mineauth.config_invalid_warning": "警告: sameIPsameAccount 需要 ipVerify 为 true 才能生效",
 
   "mineauth.player_data_loaded": "已加载 {0} 个玩家的数据",
   "mineauth.session_data_loaded": "已加载 {0} 个会话数据",
@@ -71,7 +84,8 @@
   "mineauth.session_time_set": "会话过期时间: {0}",
   "mineauth.cooldown_time_set": "冷却时间: {0}",
   "mineauth.max_attempts_set": "最大登录尝试次数: {0}",
+  "mineauth.language_set": "语言已设置为: {0}",
 
-  "mineauth.config_invalid_warning": "警告: 同一IP注册多个账号 需要 IP检测 为 true 才能生效",
-  "mineauth.ip_multiple_account_warn": "同一IP注册多个账号: IP={0}, 原账号={1}, 新账号={2}"
+  "mineauth.notify_admin_failed": "通知管理员失败: {0}",
+  "mineauth.unknown": "未知"
 }

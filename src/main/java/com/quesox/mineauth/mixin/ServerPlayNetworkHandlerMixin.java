@@ -1,12 +1,11 @@
-// ServerPlayNetworkHandlerMixin.java (合并版)
 package com.quesox.mineauth.mixin;
 
 import com.quesox.mineauth.MineAuth;
+import com.quesox.mineauth.LanguageManager;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,11 +34,11 @@ public abstract class ServerPlayNetworkHandlerMixin {
                     }
                 }
                 if (!allowed) {
-                    player.sendMessage(Text.literal("§c请先登录后再执行命令！"), true);
+                    player.sendMessage(LanguageManager.INSTANCE.tr("mineauth.command_blocked"), true);
                     ci.cancel();
                 }
             } else {
-                player.sendMessage(Text.literal("§c请先登录后再发送聊天消息！"), true);
+                player.sendMessage(LanguageManager.INSTANCE.tr("mineauth.chat_blocked"), true);
                 ci.cancel();
             }
         }
@@ -59,7 +58,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
                 }
             }
             if (!allowed) {
-                player.sendMessage(Text.literal("§c请先登录后再执行命令！"), true);
+                player.sendMessage(LanguageManager.INSTANCE.tr("mineauth.command_blocked"), true);
                 ci.cancel();
             }
         }

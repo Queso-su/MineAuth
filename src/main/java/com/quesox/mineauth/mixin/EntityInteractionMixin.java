@@ -1,7 +1,7 @@
-
 package com.quesox.mineauth.mixin;
 
 import com.quesox.mineauth.MineAuth;
+import com.quesox.mineauth.LanguageManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -20,9 +20,8 @@ public class EntityInteractionMixin {
     @Inject(method = "interact", at = @At("HEAD"), cancellable = true)
     private void onInteract(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         if ((Object) this instanceof ServerPlayerEntity player) {
-
             if (!MineAuth.isPlayerLoggedIn(player.getUuid())) {
-                player.sendMessage(net.minecraft.text.Text.literal("§c请先登录后再与实体交互！"), true);
+                player.sendMessage(LanguageManager.INSTANCE.tr("mineauth.entity_interact_blocked"), true);
                 cir.setReturnValue(ActionResult.FAIL);
                 cir.cancel();
             }
@@ -33,9 +32,8 @@ public class EntityInteractionMixin {
     @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
     private void onAttack(Entity target, CallbackInfo ci) {
         if ((Object) this instanceof ServerPlayerEntity player) {
-
             if (!MineAuth.isPlayerLoggedIn(player.getUuid())) {
-                player.sendMessage(net.minecraft.text.Text.literal("§c请先登录后再攻击实体！"), true);
+                player.sendMessage(LanguageManager.INSTANCE.tr("mineauth.entity_attack_blocked"), true);
                 ci.cancel();
             }
         }

@@ -1,6 +1,7 @@
 package com.quesox.mineauth.mixin;
 
 import com.quesox.mineauth.MineAuth;
+import com.quesox.mineauth.LanguageManager;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -28,7 +29,7 @@ public class ServerPlayerInteractionManagerMixin {
             var player = (ServerPlayerEntity) playerField.get(manager);
 
             if (!MineAuth.isPlayerLoggedIn(player.getUuid())) {
-                player.sendMessage(net.minecraft.text.Text.literal("§c请先登录后再破坏方块！"), true);
+                player.sendMessage(LanguageManager.INSTANCE.tr("mineauth.block_break_blocked"), true);
                 cir.setReturnValue(false);
                 cir.cancel();
             }
@@ -42,7 +43,7 @@ public class ServerPlayerInteractionManagerMixin {
     private void onInteractBlock(ServerPlayerEntity player, World world, ItemStack stack,
                                  Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
         if (!MineAuth.isPlayerLoggedIn(player.getUuid())) {
-            player.sendMessage(net.minecraft.text.Text.literal("§c请先登录后再放置方块！"), true);
+            player.sendMessage(LanguageManager.INSTANCE.tr("mineauth.block_place_blocked"), true);
             cir.setReturnValue(ActionResult.FAIL);
             cir.cancel();
         }
@@ -53,7 +54,7 @@ public class ServerPlayerInteractionManagerMixin {
     private void onInteractItem(ServerPlayerEntity player, World world, ItemStack stack,
                                 Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         if (!MineAuth.isPlayerLoggedIn(player.getUuid())) {
-            player.sendMessage(net.minecraft.text.Text.literal("§c请先登录后再使用物品！"), true);
+            player.sendMessage(LanguageManager.INSTANCE.tr("mineauth.item_use_blocked"), true);
             cir.setReturnValue(ActionResult.FAIL);
             cir.cancel();
         }

@@ -1,5 +1,4 @@
-// PassCommand.kt (修改)
-// PassCommand.kt (简化版)
+// PassCommand.kt (国际化版)
 package com.quesox.mineauth
 
 import com.mojang.brigadier.CommandDispatcher
@@ -11,6 +10,7 @@ import net.minecraft.command.permission.PermissionLevel
 import net.minecraft.server.command.CommandManager.*
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 
 import java.util.concurrent.CompletableFuture
 
@@ -47,16 +47,12 @@ object PassCommand {
     }
 
     private fun execute(source: ServerCommandSource, playerName: String): Int {
-        val result = StringBuilder()
-
         // 检查玩家是否存在
         if (!MineAuth.isPlayerRegisteredByName(playerName)) {
             // 从 usercache 检查
             val uuidFromUsercache = UsercacheUtil.getUuidByName(playerName)
             if (uuidFromUsercache == null) {
-                result.append("§c未找到玩家: $playerName\n")
-                result.append("§e提示: 该玩家从未进入过服务器或名称输入错误")
-                source.sendMessage(Text.literal(result.toString()))
+                sendError(source, LanguageManager.tr("mineauth.player_not_found", playerName))
                 return 0
             }
         }
@@ -65,19 +61,29 @@ object PassCommand {
         val success = MineAuth.forceResetPlayerByName(playerName)
 
         if (success) {
-            result.append("§a成功重置玩家 $playerName 的状态\n")
-            result.append("§7- 已清除登录冷却\n")
-            result.append("§7- 已重置注册状态（需要重新注册）")
+            sendSuccess(source, LanguageManager.tr("mineauth.pass_reset_success", playerName))
+            sendSuccess(source, LanguageManager.tr("mineauth.player_joined_unregistered"), )
         } else {
-            result.append("§e玩家 $playerName 不需要重置操作")
+            sendInfo(source, LanguageManager.tr("mineauth.pass_no_reset_needed", playerName))
         }
 
-        source.sendMessage(Text.literal(result.toString()))
-
-        // 记录日志
-        val operator = source.player?.name?.string ?: "控制台"
-        MineAuth.logger.info("操作员 $operator 执行了 /pass $playerName, 成功: $success")
+        // 记录日志（使用翻译）
+        val operator = source.player?.name?.string ?: "Console"
+        val logMessage = "Operator $operator executed /pass $playerName, success: $success"
+        MineAuth.logger.info(logMessage)
 
         return if (success) 1 else 0
+    }
+
+    private fun sendSuccess(source: ServerCommandSource, message: Text) {
+        source.sendMessage(message.copy().styled { it.withColor(Formatting.GREEN) })
+    }
+
+    private fun sendError(source: ServerCommandSource, message: Text) {
+        source.sendMessage(message.copy().styled { it.withColor(Formatting.RED) })
+    }
+
+    private fun sendInfo(source: ServerCommandSource, message: Text) {
+        source.sendMessage(message.copy().styled { it.withColor(Formatting.YELLOW) })
     }
 }
