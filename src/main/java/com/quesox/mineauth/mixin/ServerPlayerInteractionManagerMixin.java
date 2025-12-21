@@ -10,7 +10,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -18,23 +20,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ServerPlayerInteractionManager.class)
 public class ServerPlayerInteractionManagerMixin {
 
+    // 使用 @Shadow 注解来获取 player 字段
+    // 如果字段名被混淆，Mixin 会自动处理映射
+    @Final
+    @Shadow
+    protected ServerPlayerEntity player;
+
     // 阻止未登录玩家破坏方块
     @Inject(method = "tryBreakBlock", at = @At("HEAD"), cancellable = true)
     private void onTryBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        ServerPlayerInteractionManager manager = (ServerPlayerInteractionManager) (Object) this;
-
-        try {
-            var playerField = ServerPlayerInteractionManager.class.getDeclaredField("player");
-            playerField.setAccessible(true);
-            var player = (ServerPlayerEntity) playerField.get(manager);
-
-            if (!MineAuth.isPlayerLoggedIn(player.getUuid())) {
-                player.sendMessage(LanguageManager.INSTANCE.tr("mineauth.block_break_blocked"), true);
-                cir.setReturnValue(false);
-                cir.cancel();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (player != null && !MineAuth.isPlayerLoggedIn(player.getUuid())) {
+            player.sendMessage(LanguageManager.INSTANCE.tr("mineauth.block_break_blocked"), true);
+            cir.setReturnValue(false);
+            cir.cancel();
         }
     }
 

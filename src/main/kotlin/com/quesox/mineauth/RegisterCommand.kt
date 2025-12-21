@@ -4,8 +4,6 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.server.command.CommandManager.*
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.Text
-import net.minecraft.util.Formatting
 
 object RegisterCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
@@ -28,22 +26,22 @@ object RegisterCommand {
     }
 
     private fun execute(source: ServerCommandSource, password: String, confirmPassword: String): Int {
-        val player = source.player ?: return sendError(source, LanguageManager.tr("mineauth.only_player_command"))
+        val player = source.player ?: return CommandUtils.sendErr(source, "mineauth.only_player_command")
 
         if (MineAuth.isPlayerLoggedIn(player.uuid)) {
-            return sendMessage(source, LanguageManager.tr("mineauth.already_logged_in"), Formatting.GREEN)
+            return CommandUtils.sendSuc(source, "mineauth.already_logged_in")
         }
 
         if (password.length < 6) {
-            return sendError(source, LanguageManager.tr("mineauth.password_too_short"))
+            return CommandUtils.sendErr(source, "mineauth.password_too_short")
         }
 
         if (password != confirmPassword) {
-            return sendError(source, LanguageManager.tr("mineauth.password_mismatch"))
+            return CommandUtils.sendErr(source, "mineauth.password_mismatch")
         }
 
         if (MineAuth.isPlayerRegistered(player.uuid)) {
-            return sendError(source, LanguageManager.tr("mineauth.already_registered"))
+            return CommandUtils.sendErr(source, "mineauth.already_registered")
         }
 
         val ipAddress = MineAuth.getPlayerIpAddress(player)
@@ -52,7 +50,7 @@ object RegisterCommand {
         if (MineAuthConfig.config.ipVerify && MineAuthConfig.config.sameIPSameAccount) {
             val (ipRegistered, existingAccount) = MineAuth.isIpAlreadyRegistered(ipAddress)
             if (ipRegistered) {
-                return sendError(source, LanguageManager.tr("mineauth.ip_already_registered", existingAccount ?: LanguageManager.tr("mineauth.unknown").string))
+                return CommandUtils.sendErr(source, "mineauth.ip_already_registered", existingAccount ?: LanguageManager.tr("mineauth.unknown").string)
             }
         }
 
@@ -62,19 +60,9 @@ object RegisterCommand {
                 password,
                 ipAddress
             )) {
-            sendMessage(source, LanguageManager.tr("mineauth.register_success"), Formatting.GREEN)
+            CommandUtils.sendSuc(source, "mineauth.register_success")
         } else {
-            sendError(source, LanguageManager.tr("mineauth.register_failed"))
+            CommandUtils.sendErr(source, "mineauth.register_failed")
         }
-    }
-
-    private fun sendMessage(source: ServerCommandSource, message: Text, formatting: Formatting): Int {
-        source.sendMessage(message.copy().styled { it.withColor(formatting) })
-        return 1
-    }
-
-    private fun sendError(source: ServerCommandSource, message: Text): Int {
-        source.sendMessage(message.copy().styled { it.withColor(Formatting.RED) })
-        return 0
     }
 }

@@ -86,7 +86,13 @@
   "mineauth.max_attempts_set": "Max Login Attempts: {0}",
   "mineauth.language_set": "Language set to: {0}",
 
-  "mineauth.notify_admin_failed": "Failed to notify admin: {0}",
-  "mineauth.unknown": "未知"
 
+  "mineauth.notify_admin_failed": "Failed to notify admin: {0}",
+  "mineauth.unknown": "Unknown",
+
+  "mineauth.pass_command_enabled": "Pass Command: enabled",
+  "mineauth.pass_command_disabled": "Pass Command: disabled",
+  "mineauth.pass_success": "§aYou have been granted permanent login permission!",
+  "mineauth.pass_command_success": "§aGranted permanent login permission to player {0}",
+  "mineauth.pass_command_used": "Operator {0} used /pass command to grant permanent login permission to player {1} (UUID: {2})"
 }

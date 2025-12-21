@@ -1,4 +1,3 @@
-// PassCommand.kt (国际化版)
 package com.quesox.mineauth
 
 import com.mojang.brigadier.CommandDispatcher
@@ -7,15 +6,10 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.quesox.mineauth.CommandUtils.permissionLevelFromInt
 import net.minecraft.command.permission.Permission
-
-import net.minecraft.server.command.CommandManager.argument
-import net.minecraft.server.command.CommandManager.literal
+import net.minecraft.server.command.CommandManager.*
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.Text
-import net.minecraft.util.Formatting
-
+import java.util.*
 import java.util.concurrent.CompletableFuture
-
 
 object PassCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
@@ -26,8 +20,8 @@ object PassCommand {
                 }
                 .then(
                     argument("playerName", StringArgumentType.word())
-                        .suggests { _, builder ->
-                            providePlayerNameSuggestions(builder)
+                        .suggests { context, builder ->
+                            provideOnlinePlayerSuggestions(context.source, builder)
                         }
                         .executes { context ->
                             execute(
@@ -36,60 +30,89 @@ object PassCommand {
                             )
                         }
                 )
+                .executes { context ->
+                    executeSelf(context.source)
+                }
         )
     }
 
+    private fun provideOnlinePlayerSuggestions(
+        source: ServerCommandSource,
+        builder: SuggestionsBuilder
+    ): CompletableFuture<Suggestions> {
+        val remaining = builder.remaining.lowercase(Locale.ROOT)
 
-    private fun providePlayerNameSuggestions(builder: SuggestionsBuilder): CompletableFuture<Suggestions> {
-        val remaining = builder.remaining.lowercase()
+        // 获取服务器实例
+        val server = source.server
 
-        // 获取所有玩家名称并过滤
-        MineAuth.getAllPlayerNames()
-            .filter { it.lowercase().startsWith(remaining) }
+        server.playerManager.playerList
+            .filter { !MineAuth.isPlayerRegistered(it.uuid) } // 只建议未注册的玩家
+            .map { it.name.string }
+            .filter { it.lowercase(Locale.ROOT).startsWith(remaining) }
             .sorted()
             .forEach { builder.suggest(it) }
 
         return builder.buildFuture()
     }
 
+    private fun executeSelf(source: ServerCommandSource): Int {
+        val player = source.player
+        if (player == null) {
+            CommandUtils.sendErr(source, "mineauth.only_player_command")
+            return 0
+        }
+
+        return execute(source, player.name.string)
+    }
+
     private fun execute(source: ServerCommandSource, playerName: String): Int {
-        // 检查玩家是否存在
-        if (!MineAuth.isPlayerRegisteredByName(playerName)) {
-            // 从 usercache 检查
-            val uuidFromUsercache = UsercacheUtil.getUuidByName(playerName)
-            if (uuidFromUsercache == null) {
-                sendError(source, LanguageManager.tr("mineauth.player_not_found", playerName))
-                return 0
-            }
+        // 检查功能是否启用
+        if (!MineAuthConfig.config.enablePassCommand) {
+            CommandUtils.sendErr(source, "mineauth.pass_command_disabled")
+            return 0
         }
 
-        // 执行重置
-        val success = MineAuth.forceResetPlayerByName(playerName)
-
-        if (success) {
-            sendSuccess(source, LanguageManager.tr("mineauth.pass_reset_success", playerName))
-            sendSuccess(source, LanguageManager.tr("mineauth.player_joined_unregistered"))
-        } else {
-            sendInfo(source, LanguageManager.tr("mineauth.pass_no_reset_needed", playerName))
+        // 查找玩家
+        val targetPlayer = source.server.playerManager.getPlayer(playerName)
+        if (targetPlayer == null) {
+            CommandUtils.sendErr(source, "mineauth.player_not_found", playerName)
+            return 0
         }
 
-        // 记录日志（使用翻译）
+        val uuid = targetPlayer.uuid
+
+        // 检查玩家是否已注册
+        if (MineAuth.isPlayerRegistered(uuid)) {
+            CommandUtils.sendErr(source, "mineauth.already_registered")
+            return 0
+        }
+
+        // 创建永久会话
+        val session = PlayerSession(
+            uuid = uuid,
+            playerName = playerName,
+            ipAddress = MineAuth.getPlayerIpAddress(targetPlayer),
+            loggedIn = true,
+            lastLoginTime = System.currentTimeMillis(),
+            failedAttempts = 0,
+            lastFailedTime = 0,
+            isKicked = false,
+            isPermanent = true  // 标记为永久登录
+        )
+
+        // 保存到MineAuth的会话列表
+        MineAuth.getPlayerSessionsMap()[uuid] = session
+        MineAuth.saveSessions()
+
+        // 如果玩家在线，发送成功消息
+        targetPlayer.sendMessage(LanguageManager.tr("mineauth.pass_success"), false)
+
+        CommandUtils.sendSuc(source, "mineauth.pass_command_success", playerName)
+
+        // 记录日志
         val operator = source.player?.name?.string ?: "Console"
-        val logMessage = "Operator $operator executed /pass $playerName, success: $success"
-        MineAuth.logger.info(logMessage)
+        MineAuth.logger.info(LanguageManager.tr("mineauth.pass_command_used", operator, playerName, uuid).string)
 
-        return if (success) 1 else 0
-    }
-
-    private fun sendSuccess(source: ServerCommandSource, message: Text) {
-        source.sendMessage(message.copy().styled { it.withColor(Formatting.GREEN) })
-    }
-
-    private fun sendError(source: ServerCommandSource, message: Text) {
-        source.sendMessage(message.copy().styled { it.withColor(Formatting.RED) })
-    }
-
-    private fun sendInfo(source: ServerCommandSource, message: Text) {
-        source.sendMessage(message.copy().styled { it.withColor(Formatting.YELLOW) })
+        return 1
     }
 }

@@ -1,26 +1,27 @@
 package com.quesox.mineauth
 
-import net.fabricmc.fabric.api.util.TriState
-import net.minecraft.command.CommandSource
 import net.minecraft.command.permission.PermissionLevel
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.MathHelper
-import java.util.Objects
 
 
 object CommandUtils {
     // 发送成功消息
-    fun sendSuc(source: ServerCommandSource, message: String, vararg args: Any) {
+    fun sendSuc(source: ServerCommandSource, message: String, vararg args: Any): Int {
         val translated = LanguageManager.tr(message, *args)
         source.sendMessage(translated)
+        return 1
     }
 
     // 发送错误消息
-    fun sendErr(source: ServerCommandSource, message: String, vararg args: Any) {
+    fun sendErr(source: ServerCommandSource, message: String, vararg args: Any): Int {
         val translated = LanguageManager.tr(message, *args)
         source.sendMessage(translated.formatted(Formatting.RED))
+        return 0
     }
+
+
 
     // 发送信息消息
     fun sendInf(source: ServerCommandSource, message: String, vararg args: Any) {

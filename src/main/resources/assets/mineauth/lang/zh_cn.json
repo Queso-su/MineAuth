@@ -86,6 +86,13 @@
   "mineauth.max_attempts_set": "最大登录尝试次数: {0}",
   "mineauth.language_set": "语言已设置为: {0}",
 
+
   "mineauth.notify_admin_failed": "通知管理员失败: {0}",
-  "mineauth.unknown": "未知"
+  "mineauth.unknown": "未知",
+
+  "mineauth.pass_command_enabled": "Pass命令: 已启用",
+  "mineauth.pass_command_disabled": "Pass命令: 已禁用",
+  "mineauth.pass_success": "§a您已被授予永久登录权限！",
+  "mineauth.pass_command_success": "§a已为玩家 {0} 授予永久登录权限",
+  "mineauth.pass_command_used": "操作者 {0} 使用/pass命令为玩家 {1} (UUID: {2}) 授予永久登录权限"
 }

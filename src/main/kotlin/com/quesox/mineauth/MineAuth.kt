@@ -59,10 +59,9 @@ object MineAuth : ModInitializer {
 				configDir.mkdirs()
 			}
 
-			// 加载玩家数据
+			// 加载玩家数据和会话数据
 			loadPlayerData()
 			loadSessions()
-
 		}
 
 		// 监听服务器停止
@@ -79,6 +78,7 @@ object MineAuth : ModInitializer {
 			LoginCommand.register(dispatcher)
 			LogoutCommand.register(dispatcher)
 			ChangePasswordCommand.register(dispatcher)
+			RefreshCommand.register(dispatcher)
 			PassCommand.register(dispatcher)
 		}
 
@@ -234,21 +234,41 @@ object MineAuth : ModInitializer {
 					json.lineSequence()
 						.filter { it.isNotBlank() }
 						.forEach { line ->
-							val parts = line.split(":", limit = 8)
-							if (parts.size >= 8) {
-								val uuid = UUID.fromString(parts[0])
-								val playerName = parts[1]
-								val ipAddress = parts[2]
-								val loggedIn = parts[3].toBoolean()
-								val lastLoginTime = parts[4].toLongOrNull() ?: 0L
-								val failedAttempts = parts[5].toIntOrNull() ?: 0
-								val lastFailedTime = parts[6].toLongOrNull() ?: 0L
-								val isKicked = parts[7].toBoolean()
+							val parts = line.split(":", limit = 9)
+							when {
+								parts.size >= 9 -> {
+									// 新格式：有isPermanent字段
+									val uuid = UUID.fromString(parts[0])
+									val playerName = parts[1]
+									val ipAddress = parts[2]
+									val loggedIn = parts[3].toBoolean()
+									val lastLoginTime = parts[4].toLongOrNull() ?: 0L
+									val failedAttempts = parts[5].toIntOrNull() ?: 0
+									val lastFailedTime = parts[6].toLongOrNull() ?: 0L
+									val isKicked = parts[7].toBoolean()
+									val isPermanent = parts[8].toBoolean()
 
-								playerSessions[uuid] = PlayerSession(
-									uuid, playerName, ipAddress, loggedIn, lastLoginTime,
-									failedAttempts, lastFailedTime, isKicked
-								)
+									playerSessions[uuid] = PlayerSession(
+										uuid, playerName, ipAddress, loggedIn, lastLoginTime,
+										failedAttempts, lastFailedTime, isKicked, isPermanent
+									)
+								}
+								parts.size >= 8 -> {
+									// 旧格式：没有isPermanent字段
+									val uuid = UUID.fromString(parts[0])
+									val playerName = parts[1]
+									val ipAddress = parts[2]
+									val loggedIn = parts[3].toBoolean()
+									val lastLoginTime = parts[4].toLongOrNull() ?: 0L
+									val failedAttempts = parts[5].toIntOrNull() ?: 0
+									val lastFailedTime = parts[6].toLongOrNull() ?: 0L
+									val isKicked = parts[7].toBoolean()
+
+									playerSessions[uuid] = PlayerSession(
+										uuid, playerName, ipAddress, loggedIn, lastLoginTime,
+										failedAttempts, lastFailedTime, isKicked, false
+									)
+								}
 							}
 						}
 				}
@@ -278,7 +298,7 @@ object MineAuth : ModInitializer {
 			val data = playerSessions.values.joinToString("\n") { session ->
 				"${session.uuid}:${session.playerName}:${session.ipAddress}:" +
 						"${session.loggedIn}:${session.lastLoginTime}:" +
-						"${session.failedAttempts}:${session.lastFailedTime}:${session.isKicked}"
+						"${session.failedAttempts}:${session.lastFailedTime}:${session.isKicked}:${session.isPermanent}"
 			}
 
 			sessionFile.writeText(data)
@@ -519,5 +539,10 @@ object MineAuth : ModInitializer {
 		} catch (e: Exception) {
 			password // 失败时返回原始密码
 		}
+	}
+
+	// 获取会话映射（用于PassCommand）
+	fun getPlayerSessionsMap(): MutableMap<UUID, PlayerSession> {
+		return playerSessions
 	}
 }

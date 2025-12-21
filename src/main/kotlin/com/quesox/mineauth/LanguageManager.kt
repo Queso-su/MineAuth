@@ -215,6 +215,7 @@ object LanguageManager {
                     "mineauth.auto_login_success" to "§aWelcome back! Auto-logged in.",
                     "mineauth.player_joined_registered" to "§ePlease use §7/login <password> §eto login",
                     "mineauth.player_joined_unregistered" to "§eWelcome! Please use §6/register <password> <confirm> §eto register"
+
                 ))
             }
             else -> {

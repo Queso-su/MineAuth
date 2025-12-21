@@ -16,7 +16,8 @@ data class MineAuthConfigData(
     var sessionTime: String = "1d",                   // 会话过期时间
     var enableLoginLimit: Boolean = true,             // 是否启用登录尝试限制
     var coolDownTime: String = "5m",                  // 冷却时间
-    var maxLoginAttempts: Int = 10                    // 最大登录尝试次数
+    var maxLoginAttempts: Int = 10,                   // 最大登录尝试次数
+    var enablePassCommand: Boolean = false            // 是否启用/pass命令
 ) {
     // 检查配置是否有效
     fun isValid(): Boolean {
@@ -173,6 +174,10 @@ object MineAuthConfig {
                         if (config.maxLoginAttempts < 1) config.maxLoginAttempts = 10
                         logger.info(LanguageManager.tr("mineauth.max_attempts_set", config.maxLoginAttempts).string)
                     }
+                    "enablepasscommand" -> {
+                        config.enablePassCommand = value.equals("true", ignoreCase = true)
+                        logger.info(LanguageManager.tr(if (config.enablePassCommand) "mineauth.pass_command_enabled" else "mineauth.pass_command_disabled").string)
+                    }
                     else -> {
                         logger.warn(LanguageManager.tr("mineauth.unknown_config_key", key).string)
                     }
@@ -230,10 +235,10 @@ object MineAuthConfig {
                 # [同一IP单账号 / One Account per IP]
                 # 必须开启ipVerify才能生效
                 # 开启后，同一IP注册多个账号会被禁止，并通知管理员
-                # 可使用/pass命令重置账号状态
+                # 可使用/refresh 命令重置账号状态
                 # When enabled, registering multiple accounts from the same IP will be blocked and admins will be notified
                 # Requires ipVerify to be enabled
-                # Use /pass command to reset account status
+                # Use /refresh command to reset account status
                 
                 sameIPSameAccount=${config.sameIPSameAccount}
                 
@@ -258,10 +263,10 @@ object MineAuthConfig {
                 # [冷却时间 / CoolDown Time]
                 # 达到最大尝试次数后的等待时间
                 # 支持格式: 10m (分钟), 1h (小时), 2d (天)
-                # /pass 命令可以重置冷却时间
+                # /refresh 命令可以重置冷却时间
                 # Waiting time after reaching maximum attempts
                 # Supported formats: 10m (minutes), 1h (hours), 2d (days)
-                # /pass command can reset cooldown
+                # /refresh command can reset cooldown
                 
                 coolDownTime=${config.coolDownTime}
                 
@@ -272,6 +277,16 @@ object MineAuthConfig {
                 # Only effective when enableLoginLimit=true
                 
                 maxLoginAttempts=${config.maxLoginAttempts}
+                
+                
+                
+                # [Pass命令 / Pass Command]
+                # 开启后，OP可以使用/pass命令让玩家永久登录，无需注册
+                # 使用后该玩家将永久登录，不受会话时间限制
+                # When enabled, OP can use /pass command to let players login permanently without registration
+                # After using, the player will be permanently logged in, not affected by session time
+                
+                enablePassCommand=${config.enablePassCommand}
                 
                 
                 
