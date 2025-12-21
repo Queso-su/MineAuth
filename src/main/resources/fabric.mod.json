@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "mineauth",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"name": "MineAuth",
 	"description": "A simple and easy-to-use auth tool suitable for small servers, supports Minecraft 1.21.11 /一个Minecraft登录验证模组，保护你的服务器安全",
 	"authors": [
